@@ -1,0 +1,3 @@
+./ob_error -a=100 ora 600
+./ob_error ora -a=100 600
+./ob_error ora 600 -a=100
