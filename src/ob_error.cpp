@@ -6,7 +6,8 @@ static void print_help() {
     printf("This is the ob_error tool. Usage:\n\n");
     printf("    ob_error [option]\n");
     printf("    ob_error [facility] errorcode [-a=ARGUMENT]\n");
-    printf("    ob_error [facility] errorcode [--argument=ARGUMENT]\n\n");
+    printf("    ob_error [facility] errorcode [--argument=ARGUMENT]\n");
+    printf("Get the error information, reasons and possible solutions.\n\n");
     printf("Query an error:\n\n");
     printf("    ob_error errorcode\n\n");
     printf("Query an error in MySQL mode:\n\n");
@@ -37,9 +38,7 @@ static bool print_os_info(int errorcode) {
 
     const char* err_name = str_os_error_name(errorcode);
     if (NULL == err_name) return false;
-    printf("%s\n", str_os_error_msg(errorcode));
-    printf("Cause: %s\n", str_os_error_cause(errorcode));
-    printf("Solution: %s\n", str_os_error_solution(errorcode));
+    printf("\n%s\n", str_os_error_msg(errorcode));
     return true;
 }
 
@@ -59,7 +58,7 @@ static bool print_mysql_info(int errorcode) {
     if (nullptr == str_user_error) {
         return false;
     }
-    printf("ERROR %d (%s): %s\n", errorcode, ob_sqlstate(-ob_error), str_user_error);
+    printf("\nERROR %d (%s): %s\n", errorcode, ob_sqlstate(-ob_error), str_user_error);
     printf("Cause: %s\n", ob_error_cause(-ob_error));
     printf("Solution: %s\n", ob_error_solution(-ob_error));
     return true;
@@ -80,22 +79,20 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
             // 根据ob内部错误码得到信息后，需要重新验证该错误是否是ORA-00600
             if (-OB_ERR_PROXY_REROUTE == ob_errpkt_errno(-errorcode, true) 
                 || 600 == ob_errpkt_errno(-errorcode, true)) {
-                printf("%s\n", str_user_error);
+                printf("\n%s\n", str_user_error);
                 printf("Cause: %s\n", ob_error_cause(-errorcode));
                 printf("Solution: %s\n", ob_error_solution(-errorcode));
                 info_count++;
             }
         }
         // 处理ORA-errorcode的情况
-        if(600 != errorcode) {
-            // ORA-00600冲突太多，必须以-a=ARG的形式额外输入argument
-            PRINT_INFO_LOOP(oracle_ora, true);
-        }
+        // ORA-00600这里保证没有输入-a=ARG参数，因此输出ORA-00600原始的可能错误
+        PRINT_INFO_LOOP(oracle_ora, true);
         // 处理PLS-errorcode的情况
         PRINT_INFO_LOOP(oracle_pls, true);
-        // 如果PLS-00600不存在，那么提示可能是要找ORA-00600
+        // 如果任何00600不存在，那么提示可能是要找ORA-00600 -a
         if(600 == errorcode && info_count == 0) {
-            printf("error: this error does not exist\n");
+            printf("\nerror: this error does not exist\n");
             printf("Maybe you want to query error 'ORA-00600'? ");
             printf("Use 'ob_error ora 600 -a=ARG' to do it.\n");
             printf("Use 'ob_error --help' for help.\n");
@@ -106,17 +103,17 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
         if (strcasecmp(oracle_sqlstate, "ORA") == 0) {
             if (600 == errorcode) {
                 ob_error = argument;
-                // 600是特殊错误值，一定对应ORA-00600，只查询一条结果
+                // 600是特殊错误值，如果没有-a参数那么输出ORA-00600原始的可能错误
                 if(-1 == ob_error) {
-                    printf(">input argument (you can't only input an enter): ");
-                    scanf("%d", &ob_error);
+                    PRINT_INFO_LOOP(oracle_ora, true);
+                    return (info_count != 0);
                 }
                 const char *str_user_error = ob_errpkt_str_user_error(-ob_error, true);
                 if (nullptr != str_user_error) {
                     // 根据ob内部错误码得到信息后，需要重新验证该错误是否是ORA-00600
                     if (-OB_ERR_PROXY_REROUTE == ob_errpkt_errno(-ob_error, true) 
                         || 600 == ob_errpkt_errno(-ob_error, true)) {
-                        printf("%s\n", str_user_error);
+                        printf("\n%s\n", str_user_error);
                         printf("Cause: %s\n", ob_error_cause(-ob_error));
                         printf("Solution: %s\n", ob_error_solution(-ob_error));
                         return true;
@@ -127,7 +124,7 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
             } else {
                 if(-1 != argument) {
                     // -a参数仅支持ORA-00600错误码
-                    printf("error: '-a=ARG' is unsupport in this scene\n");
+                    printf("\nerror: '-a=ARG' is unsupport in this scene\n");
                     printf("Use 'ob_error ora 600 -a=ARG'.\n");
                     printf("Use 'ob_error --help' for help.\n");
                     return true;
@@ -138,7 +135,7 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
         } else if(strcasecmp(oracle_sqlstate, "PLS") == 0) {
             if (-1 != argument) {
                 // -a参数仅支持ORA-00600错误码
-                printf("error: '-a=ARG' is unsupport in this scene\n");
+                printf("\nerror: '-a=ARG' is unsupport in this scene\n");
                 printf("Use 'ob_error ora 600 -a=ARG'.\n");
                 printf("Use 'ob_error --help' for help.\n");
                 return true;
@@ -196,20 +193,20 @@ bool parse_param(int args, char *argv[]) {
         return false;
     } else if (oracle_mode) {
         if (!print_oracle_info(oracle_sqlstate, errorcode, argument)) {
-            printf("error: this error does not exist\n");
+            printf("\nerror: this error does not exist\n");
             printf("Check your input.\n");
         }
         return true;
     } else if(mysql_mode) {
         if (!print_mysql_info(errorcode)) {
-            printf("error: this error does not exist\n");
+            printf("\nerror: this error does not exist\n");
             printf("Check your input.\n");
         }
         return true;
     } else {
         if (-1 != argument) {
             // -a参数仅支持ORA-00600错误码
-            printf("error: '-a=ARG' is unsupport in this scene\n");
+            printf("\nerror: '-a=ARG' is unsupport in this scene\n");
             printf("Use 'ob_error ora 600 -a=ARG'.\n");
             printf("Use 'ob_error --help' for help.\n");
             return true;
@@ -218,7 +215,7 @@ bool parse_param(int args, char *argv[]) {
         bool res_mysql = print_mysql_info(errorcode);
         bool res_oracle = print_oracle_info(nullptr, errorcode, argument);
         if(!(res_os || res_mysql || res_oracle)) {
-            printf("error: this error does not exist\n");
+            printf("\nerror: this error does not exist\n");
             printf("Check your input.\n");
         }
         return true;
@@ -241,14 +238,14 @@ int main(int args, char *argv[]) {
     
     if (1 < args) {
         if (!parse_param(args, argv)) {
-            printf("error: parameter invalid\n");
+            printf("\nerror: parameter invalid\n");
             printf("Use 'ob_error --help' for help.\n");
             return 0;
         } 
         return 0;
     }
     
-    printf("error: missing parameter\n");
+    printf("\nerror: missing parameter\n");
     printf("Use 'ob_error --help' for help.\n");
     return 0;
 }

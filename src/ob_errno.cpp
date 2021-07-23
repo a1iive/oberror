@@ -10901,9 +10901,9 @@ static struct ObStrErrorInit
     SQLSTATE[-OB_ERR_REGEXP_ECOLLATE] = "HY000";
     STR_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "invalid collation class in regular expression";
     STR_USER_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "invalid collation class in regular expression";
-    ORACLE_ERRNO[-OB_ERR_REGEXP_ECOLLATE] = 600;
-    ORACLE_STR_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "ORA-00600: internal error code, arguments: -5817, invalid collation class in regular expression";
-    ORACLE_STR_USER_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "ORA-00600: internal error code, arguments: -5817, invalid collation class in regular expression";
+    ORACLE_ERRNO[-OB_ERR_REGEXP_ECOLLATE] = 12731;
+    ORACLE_STR_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "ORA-12731: invalid collation class in regular expression";
+    ORACLE_STR_USER_ERROR[-OB_ERR_REGEXP_ECOLLATE] = "ORA-12731: invalid collation class in regular expression";
     ERROR_NAME[-OB_ERR_REGEXP_EBRACE] = "OB_ERR_REGEXP_EBRACE";
     ERROR_CAUSE[-OB_ERR_REGEXP_EBRACE] = "to be continue";
     ERROR_SOLUTION[-OB_ERR_REGEXP_EBRACE] = "to be continue";
@@ -14317,6 +14317,18 @@ const char *ob_errpkt_str_user_error(const int err, const bool is_oracle_mode)
   return (is_oracle_mode ? ob_oracle_str_user_error(err) : ob_str_user_error(err));
 }
 
+int argument_exist(const char* error_msg) {
+  if (NULL == error_msg) {
+    return 0;
+  }
+  int len = strlen(error_msg);
+  for (int i = 0; i < len; i++) {
+    if (0 == strncmp(error_msg+i, "arguments", 9)) {
+      return 1;
+    }
+  }
+  return 0;
+}
 void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE], 
     int pls_err[][OB_MAX_SAME_ERRORCODE], int mysql_err[][OB_MAX_SAME_ERRORCODE]) {
   for (int i = 0; i < OB_MAX_ERROR_CODE; i++) {
@@ -14332,7 +14344,13 @@ void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE],
       if (0 == strncmp(ORACLE_STR_ERROR[i], "ORA", 3)) {
         for (int k = 0; k < OB_MAX_SAME_ERRORCODE; k++) {
           if (-1 == ora_err[ORACLE_ERRNO[i]][k]) {
-            ora_err[ORACLE_ERRNO[i]][k] = i;
+            if (600 == ORACLE_ERRNO[i]) {
+              if (!argument_exist(ORACLE_STR_USER_ERROR[i])) {
+                ora_err[ORACLE_ERRNO[i]][k] = i;
+              }
+            } else {
+              ora_err[ORACLE_ERRNO[i]][k] = i;
+            }
             break;
           }
         }

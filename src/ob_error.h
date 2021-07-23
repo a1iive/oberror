@@ -14,9 +14,9 @@
                 const char *str_user_error = ob_errpkt_str_user_error(-ob_error, oracle_mode); \
                 if (str_user_error != nullptr) { \
                     if (oracle_mode) { \
-                        printf("%s\n", str_user_error); \
+                        printf("\n%s\n", str_user_error); \
                     } else { \
-                        printf("ERROR %d (%s): %s\n", errorcode, ob_sqlstate(-ob_error), str_user_error); \
+                        printf("\nERROR %d (%s): %s\n", errorcode, ob_sqlstate(-ob_error), str_user_error); \
                     } \
                     printf("Cause: %s\n", ob_error_cause(-ob_error)); \
                     printf("Solution: %s\n", ob_error_solution(-ob_error)); \

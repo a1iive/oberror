@@ -38,6 +38,13 @@
 //DEFINE_PLS_ERROR(C1, C0, M1, M2, M3, R1, R3)                <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M3, R1, PLS, R3, R3)
 //DEFINE_PLS_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, R3, R4)    <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, PLS, R3, R4)
 //
+//DEFINE_ERROR(C1, C0, M1, M2, M3, C2, C3)                            <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M3, -600, M2, M3, M3, C2, C3)
+//DEFINE_ERROR_EXT(C1, C0, M1, M2, M3, M4, C2, C3)                    <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M4, -600, M2, M3, M4, C2, C3)
+//DEFINE_ORACLE_ERROR(C1, C0, M1, M2, M3, R1, R3, C2, C3)             <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M3, R1, ORA, R3, R3, C2, C3)
+//DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, R3, R4, C2, C3) <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, ORA, R3, R4, C2, C3)
+//DEFINE_PLS_ERROR(C1, C0, M1, M2, M3, R1, R3, C2, C3)                <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M3, R1, PLS, R3, R3, C2, C3)
+//DEFINE_PLS_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, R3, R4, C2, C3)    <==>   DEFINE_ORACLE_ERROR_EXT(C1, C0, M1, M2, M3, M4, R1, PLS, R3, R4, C2, C3)
+//
 //DEFINE_ERROR(C1, C0, M1, M2, M3)
 //   C2 = to be continues
 //   C3 = to be continues
@@ -94,6 +101,13 @@
 ////////////////////////////////////////////////////////////////
 
 DEFINE_ERROR(OB_SUCCESS, 0, 0, "00000", "Success");
+//DEFINE_ERROR(OB_TMP_ERROR, -3991, -1, "HY000", "Test error", "i don't know", "i know");
+//DEFINE_ERROR_EXT(OB_TMP_ERROR_EXT, -3992, -1, "HY000", "Test error", "Test error", "i don't know", "i know");
+//DEFINE_ORACLE_ERROR(OB_TMP_ORACLE_ERROR, -3993, -1, "HY000", "Test error", 600, "Test error", "i don't know", "i know");
+//DEFINE_ORACLE_ERROR_EXT(OB_TMP_ORACLE_ERROR_EXT, -3994, -1, "HY000", "Test error", "Test error", 600, "Test error", "Test error", "i don't know", "i know");
+//DEFINE_PLS_ERROR(OB_TMP_PLS_ERROR, -3995, -1, "HY000", "Test error", 1100, "Test error", "i don't know", "i know");
+//DEFINE_PLS_ERROR_EXT(OB_TMP_PLS_ERROR_EXT, -3996, -1, "HY000", "Test error", "Test error", 1101, "Test error", "Test error", "i don't know", "i know");
+//DEFINE_ERROR(OB_ERROR_TMP, -4045, -1, "HY000", "Common error");
 
 ////////////////////////////////////////////////////////////////
 //error code for common -4000 ---- -4500
@@ -1213,7 +1227,7 @@ DEFINE_ORACLE_ERROR(OB_ERR_REGEXP_EPAREN, -5813, -1, "HY000", "unmatched parenth
 DEFINE_ORACLE_ERROR(OB_ERR_REGEXP_ESUBREG, -5814, -1, "HY000", "invalid back reference in regular expression", 12727, "invalid back reference in regular expression");
 DEFINE_ORACLE_ERROR(OB_ERR_REGEXP_ERANGE, -5815, -1, "HY000", "invalid range in regular expression", 12728, "invalid range in regular expression");
 DEFINE_ORACLE_ERROR(OB_ERR_REGEXP_ECTYPE, -5816, -1, "HY000", "invalid character class in regular expression", 12729, "invalid character class in regular expression");
-DEFINE_ERROR(OB_ERR_REGEXP_ECOLLATE, -5817, -1, "HY000", "invalid collation class in regular expression", 12731, "invalid collation class in regular expression");
+DEFINE_ORACLE_ERROR(OB_ERR_REGEXP_ECOLLATE, -5817, -1, "HY000", "invalid collation class in regular expression", 12731, "invalid collation class in regular expression");
 DEFINE_ERROR(OB_ERR_REGEXP_EBRACE, -5818, -1, "HY000", "braces {} not balanced in in regular expression");
 DEFINE_ERROR(OB_ERR_REGEXP_BADBR, -5819, -1, "HY000", "invalid repetition count(s) in regular expression");
 DEFINE_ERROR(OB_ERR_REGEXP_BADRPT, -5820, -1, "HY000", "The regular expression was too complex and current library can't be parsed");

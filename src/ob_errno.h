@@ -1435,8 +1435,8 @@ constexpr int OB_ERR_UPDATE_TWICE = -30926;
 constexpr int OB_ERR_FLASHBACK_QUERY_WITH_UPDATE = -32491;
 constexpr int OB_ERR_UPDATE_ON_EXPR = -38104;
 constexpr int OB_ERR_SPECIFIED_ROW_NO_LONGER_EXISTS = -38105;
-constexpr int OB_ERR_INVALID_DATE_MSG_FMT_V2 = -4219;
 constexpr int OB_ERR_DATA_TOO_LONG_MSG_FMT_V2 = -5167;
+constexpr int OB_ERR_INVALID_DATE_MSG_FMT_V2 = -4219;
 
 
 
@@ -1460,6 +1460,7 @@ int ob_errpkt_errno(const int oberr, const bool is_oracle_mode);
 const char *ob_errpkt_strerror(const int oberr, const bool is_oracle_mode);
 const char *ob_errpkt_str_user_error(const int oberr, const bool is_oracle_mode);
 
+int argument_exist(const char* error_msg);
 void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE], 
     int pls_err[][OB_MAX_SAME_ERRORCODE], int mysql_err[][OB_MAX_SAME_ERRORCODE]);
 

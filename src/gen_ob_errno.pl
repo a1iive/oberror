@@ -10,7 +10,7 @@
 
 use strict;
 use warnings;
-open my $fh, '<', "os_errno.def";
+open my $fh, '<', "ob_errno.def";
 my %map_share;
 my %other_map_share;
 my %map_deps;
@@ -31,7 +31,70 @@ while(<$fh>) {
   my $sqlstate;
   my $error_code;
 
-  if (/^DEFINE_ERROR\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")/) {
+  if (/^DEFINE_ERROR\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7\n";
+    my $tmp_ora_errmsg=sprintf($print_def_ora_errmsg, "ORA", $def_ora_errno, $2, substr($5, 1, length($5) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $5, "$1", $def_ora_errno, $tmp_ora_errmsg, $tmp_ora_errmsg, $6, $7];
+    $map{$1} = [$2, $3, $4, $5, $5, "$1", $def_ora_errno, $tmp_ora_errmsg, $tmp_ora_errmsg, $6, $7];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_ERROR_EXT\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7, $8\n";
+    my $tmp_ora_errmsg=sprintf($print_def_ora_errmsg, "ORA", $def_ora_errno, $2, substr($5, 1, length($5) - 2));
+    my $tmp_ora_user_errmsg=sprintf($print_def_ora_errmsg, "ORA", $def_ora_errno, $2, substr($6, 1, length($6) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $6, "$1", $def_ora_errno, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $7, $8];
+    $map{$1} = [$2, $3, $4, $5, $6, "$1", $def_ora_errno, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $7, $8];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_ORACLE_ERROR\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")\s*,\s*([^,]*),\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7, $8, $9\n";
+    my $tmp_ora_errmsg=sprintf($print_ora_errmsg, "ORA", $6, substr($7, 1, length($7) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $5, "$1", $6, $tmp_ora_errmsg, $tmp_ora_errmsg, $8, $9];
+    $map{$1} = [$2, $3, $4, $5, $5, "$1", $6, $tmp_ora_errmsg, $tmp_ora_errmsg, $8, $9];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_ORACLE_ERROR_EXT\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")\s*,\s*("[^"]*")\s*,\s*([^,]*),\s*("[^"]*")\s*,\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11\n";
+    my $tmp_ora_errmsg=sprintf($print_ora_errmsg, "ORA", $7, substr($8, 1, length($8) - 2));
+    my $tmp_ora_user_errmsg=sprintf($print_ora_errmsg, "ORA", $7, substr($9, 1, length($9) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $6, "$1", $7, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $10, $11];
+    $map{$1} = [$2, $3, $4, $5, $6, "$1", $7, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $10, $11];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_PLS_ERROR\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")\s*,\s*([^,]*),\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7, $8, $9\n";
+    my $tmp_ora_errmsg=sprintf($print_ora_errmsg, "PLS", $6, substr($7, 1, length($7) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $5, "$1", $6, $tmp_ora_errmsg, $tmp_ora_errmsg, $8, $9];
+    $map{$1} = [$2, $3, $4, $5, $5, "$1", $6, $tmp_ora_errmsg, $tmp_ora_errmsg, $8, $9];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_PLS_ERROR_EXT\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")\s*,\s*("[^"]*")\s*,\s*([^,]*),\s*("[^"]*")\s*,\s*("[^"]*")/) {
+    ++$error_count;
+    #print "\"$1\", $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11\n";
+    my $tmp_ora_errmsg=sprintf($print_ora_errmsg, "PLS", $7, substr($8, 1, length($8) - 2));
+    my $tmp_ora_user_errmsg=sprintf($print_ora_errmsg, "PLS", $7, substr($9, 1, length($9) - 2));
+    $map_share{$1} = [$2, $3, $4, $5, $6, "$1", $7, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $10, $11];
+    $map{$1} = [$2, $3, $4, $5, $6, "$1", $7, $tmp_ora_errmsg, $tmp_ora_user_errmsg, $10, $11];
+    $last_errno = $2 if ($2 < $last_errno);
+    $error_code = $2;
+    $sqlstate = $4;
+    $error_msg = $5;
+  } elsif (/^DEFINE_ERROR\(([^,]+),\s*([^,]*),\s*([^,]*),\s*([^,]*),\s*("[^"]*")/) {
     ++$error_count;
     #print "\"$1\", $1, $2, $3, $4, $5\n";
     my $tmp_ora_errmsg=sprintf($print_def_ora_errmsg, "ORA", $def_ora_errno, $2, substr($5, 1, length($5) - 2));
@@ -279,7 +342,7 @@ constexpr int OB_ERR_SQL_END = -5999;
       }
       print $fh_header "constexpr int $oberr = $errno;\n";
     }
-    }
+  }
   print $fh_header "\n\n";
   print $fh_header '
 
@@ -302,6 +365,7 @@ int ob_errpkt_errno(const int oberr, const bool is_oracle_mode);
 const char *ob_errpkt_strerror(const int oberr, const bool is_oracle_mode);
 const char *ob_errpkt_str_user_error(const int oberr, const bool is_oracle_mode);
 
+int argument_exist(const char* error_msg);
 void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE], 
     int pls_err[][OB_MAX_SAME_ERRORCODE], int mysql_err[][OB_MAX_SAME_ERRORCODE]);
 
@@ -323,11 +387,11 @@ print $fh_header_dep '
 // DO NOT EDIT. This file is automatically generated from ob_errno.def.
 // To add errno in this header file, you should use DEFINE_***_DEP to define errno in ob_errno.def
 // For any question, call fyy280124
-#ifndef __OBERROR_LIB_OB_ERROR_H__
-#define __OBERROR_LIB_OB_ERROR_H__
+#ifndef __OBERROR_LIB_OB_ERRNO_H__
+#define __OBERROR_LIB_OB_ERRNO_H__
 
 
-constexpr int OB_MAX_SAME_ERRORCODE                  = 5;
+constexpr int OB_MAX_SAME_ERRORCODE                  = 5; // maybe larger in the future
 constexpr int OB_MAX_ERROR_CODE                      = 65535;
 ';
 
@@ -340,7 +404,7 @@ constexpr int OB_MAX_RAISE_APPLICATION_ERROR         = -20000;
 constexpr int OB_MIN_RAISE_APPLICATION_ERROR         = -20999;
 
 
-#endif /* __OBERROR_LIB_OB_ERROR_H__ */
+#endif /* __OBERROR_LIB_OB_ERRNO_H__ */
 ';
 
 
@@ -561,6 +625,18 @@ const char *ob_errpkt_str_user_error(const int err, const bool is_oracle_mode)
   return (is_oracle_mode ? ob_oracle_str_user_error(err) : ob_str_user_error(err));
 }
 
+int argument_exist(const char* error_msg) {
+  if (NULL == error_msg) {
+    return 0;
+  }
+  int len = strlen(error_msg);
+  for (int i = 0; i < len; i++) {
+    if (0 == strncmp(error_msg+i, "arguments", 9)) {
+      return 1;
+    }
+  }
+  return 0;
+}
 void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE], 
     int pls_err[][OB_MAX_SAME_ERRORCODE], int mysql_err[][OB_MAX_SAME_ERRORCODE]) {
   for (int i = 0; i < OB_MAX_ERROR_CODE; i++) {
@@ -576,7 +652,13 @@ void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE],
       if (0 == strncmp(ORACLE_STR_ERROR[i], "ORA", 3)) {
         for (int k = 0; k < OB_MAX_SAME_ERRORCODE; k++) {
           if (-1 == ora_err[ORACLE_ERRNO[i]][k]) {
-            ora_err[ORACLE_ERRNO[i]][k] = i;
+            if (600 == ORACLE_ERRNO[i]) {
+              if (!argument_exist(ORACLE_STR_USER_ERROR[i])) {
+                ora_err[ORACLE_ERRNO[i]][k] = i;
+              }
+            } else {
+              ora_err[ORACLE_ERRNO[i]][k] = i;
+            }
             break;
           }
         }

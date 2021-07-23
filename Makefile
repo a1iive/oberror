@@ -8,32 +8,44 @@ LINK = g++
 LINKFLAGS =
 HEADER  =
 
-OBJECT = src/ob_error.o \
-		 src/ob_errno.o \
-		 src/os_errno.o
+SOURCES = src/os_errno.cpp \
+	      src/ob_errno.cpp \
+	      src/ob_error.cpp 
+
+SRC_PATH = src
+OBJ_PATH = build
+BIN_PATH = build/bin
+
+OBJECT = $(patsubst %.cpp,$(OBJ_PATH)/%.o, $(notdir $(SOURCES)))
 
 .PHONY: clean
 
 TARGET = ob_error
 
-$(TARGET): $(OBJECT)
-	$(LINK) $(FLAGS) $(LINKFLAGS) -o $@ $^ $(LIBS)
+test = $(shell if [ -d $(BIN_PATH) ]; then echo "exist"; else echo "noexist"; fi)
+
+ifeq ("$(test)", "noexist")
+$(shell mkdir $(BIN_PATH))
+endif
+
+$(BIN_PATH)/$(TARGET): $(OBJECT)
+	$(LINK) $(FLAGS) $(LINKFLAGS) $^ -o $@ $(LIBS)
 
 # 编译cpp代码用这个目标
-%.o: %.cpp
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
 	$(GCC) -c $(HEADER) $(FLAGS) $(GCCFLAGS) $< -o $@
 
 # 编译c代码用这个
-%.o: %.c
-	$(CC) -c $(HEADER) $(FLAGS) $< -o $@
+# $(OBJ_PATH)/%.o: %.c
+#	$(CC) -c $(HEADER) $(FLAGS) $< -o $@
 
 clean:
-	rm -rf $(TARGET) $(OBJECT)
+	rm -rf $(OBJ_PATH)/*
 
 INSTALL_PATH := /usr/local/bin
 
-install: $(TARGET)
-	cp $(TARGET) $(INSTALL_PATH)
+install: $(BIN_PATH)/$(TARGET)
+	cp $(BIN_PATH)/$(TARGET) $(INSTALL_PATH)
 
 uninstall:
 	rm -f $(INSTALL_PATH)/$(TARGET)

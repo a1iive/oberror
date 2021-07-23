@@ -1,0 +1,85 @@
+
+ERROR 4000 (HY000): Common error
+Cause: to be continue
+Solution: to be continue
+
+OS Error 13: Permission denied
+
+ORA-00600: auto increment service busy
+Cause: to be continue
+Solution: to be continue
+
+ORA-00600: rowid type mismatch, expect %s, got %s
+Cause: to be continue
+Solution: to be continue
+
+ORA-00600: rowid type mismatch, expect %ld, actual %ld
+Cause: to be continue
+Solution: to be continue
+
+ORA-00051: timeout occurred while waiting for a resource
+Cause: to be continue
+Solution: to be continue
+
+ORA-00900: %s near '%.*s' at line %d
+Cause: to be continue
+Solution: to be continue
+
+ORA-00900: You have an error in your SQL syntax; check the manual that corresponds to your OceanBase version for the right syntax to use
+Cause: to be continue
+Solution: to be continue
+
+ORA-00600: internal error code, arguments: -5858, Conflicting declarations: '%s' and '%s'
+Cause: to be continue
+Solution: to be continue
+
+ERROR 5858 (42000): Conflicting declarations: '%s' and '%s'
+Cause: to be continue
+Solution: to be continue
+
+ORA-00600: internal error code, arguments: -5858, Conflicting declarations: '%s' and '%s'
+Cause: to be continue
+Solution: to be continue
+
+error: parameter invalid
+Use 'ob_error --help' for help.
+
+error: parameter invalid
+Use 'ob_error --help' for help.
+
+error: this error does not exist
+Check your input.
+
+error: '-a=ARG' is unsupport in this scene
+Use 'ob_error ora 600 -a=ARG'.
+Use 'ob_error --help' for help.
+
+OS Error 1: Operation not permitted
+
+ORA-00001: unique constraint '%s' for key '%.*s' violated
+Cause: to be continue
+Solution: to be continue
+
+ORA-00001: unique constraint violated, column '%.*s' with value '%.*s' in %s
+Cause: to be continue
+Solution: to be continue
+
+ORA-00001: unique constraint (%.*s) violated
+Cause: to be continue
+Solution: to be continue
+
+ORA-00001: unique constraint (%.*s) violated
+Cause: to be continue
+Solution: to be continue
+
+ERROR 4001 (HY004): Object type error
+Cause: to be continue
+Solution: to be continue
+
+ORA-00600: internal error code, arguments: -4001, Object type error
+Cause: to be continue
+Solution: to be continue
+
+ORA-04001: sequence parameter %s must be an integer
+Cause: to be continue
+Solution: to be continue
