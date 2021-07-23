@@ -14333,8 +14333,8 @@ void ob_init_error_to_oberror(int ora_err[][OB_MAX_SAME_ERRORCODE],
     int pls_err[][OB_MAX_SAME_ERRORCODE], int mysql_err[][OB_MAX_SAME_ERRORCODE]) {
   for (int i = 0; i < OB_MAX_ERROR_CODE; i++) {
     if (-1 != MYSQL_ERRNO[i] && MYSQL_ERRNO[i] < 4000) {
-      for(int k = 0; k < OB_MAX_SAME_ERRORCODE; k++) {
-        if(-1 == mysql_err[MYSQL_ERRNO[i]][k]) {
+      for (int k = 0; k < OB_MAX_SAME_ERRORCODE; k++) {
+        if (-1 == mysql_err[MYSQL_ERRNO[i]][k]) {
             mysql_err[MYSQL_ERRNO[i]][k] = i;
             break;
         }

@@ -12,7 +12,7 @@
             } else { \
                 ob_error = g_##array[errorcode][i]; \
                 const char *str_user_error = ob_errpkt_str_user_error(-ob_error, oracle_mode); \
-                if (str_user_error != nullptr) { \
+                if (nullptr != str_user_error) { \
                     if (oracle_mode) { \
                         printf("\n%s\n", str_user_error); \
                     } else { \

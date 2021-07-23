@@ -37,7 +37,7 @@ static bool print_os_info(int errorcode) {
     }
 
     const char* err_name = str_os_error_name(errorcode);
-    if (NULL == err_name) return false;
+    if (nullptr == err_name) return false;
     printf("\n%s\n", str_os_error_msg(errorcode));
     return true;
 }
@@ -104,7 +104,7 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
             if (600 == errorcode) {
                 ob_error = argument;
                 // 600是特殊错误值，如果没有-a参数那么输出ORA-00600原始的可能错误
-                if(-1 == ob_error) {
+                if (-1 == ob_error) {
                     PRINT_INFO_LOOP(oracle_ora, true);
                     return (info_count != 0);
                 }
@@ -122,7 +122,7 @@ static bool print_oracle_info(char *oracle_sqlstate, int errorcode, int argument
                 // 直接返回
                 return false;
             } else {
-                if(-1 != argument) {
+                if (-1 != argument) {
                     // -a参数仅支持ORA-00600错误码
                     printf("\nerror: '-a=ARG' is unsupport in this scene\n");
                     printf("Use 'ob_error ora 600 -a=ARG'.\n");
@@ -160,8 +160,8 @@ bool parse_param(int args, char *argv[]) {
         return false;
     }
 
-    for(int i = 1; i < args; i++) {
-        if (0 == strcmp(argv[i], "-h")|| 0 == strcmp(argv[i], "--help")) {
+    for (int i = 1; i < args; i++) {
+        if (0 == strcmp(argv[i], "-h") || 0 == strcmp(argv[i], "--help")) {
             print_help();
             return true;
         } else if (0 == strcmp(argv[i], "-V") || 0 == strcmp(argv[i], "--version")) {
@@ -197,7 +197,7 @@ bool parse_param(int args, char *argv[]) {
             printf("Check your input.\n");
         }
         return true;
-    } else if(mysql_mode) {
+    } else if (mysql_mode) {
         if (!print_mysql_info(errorcode)) {
             printf("\nerror: this error does not exist\n");
             printf("Check your input.\n");
@@ -214,7 +214,7 @@ bool parse_param(int args, char *argv[]) {
         bool res_os = print_os_info(errorcode);
         bool res_mysql = print_mysql_info(errorcode);
         bool res_oracle = print_oracle_info(nullptr, errorcode, argument);
-        if(!(res_os || res_mysql || res_oracle)) {
+        if (!(res_os || res_mysql || res_oracle)) {
             printf("\nerror: this error does not exist\n");
             printf("Check your input.\n");
         }
